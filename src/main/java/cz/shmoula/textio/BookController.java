@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.shmoula.textio.domain.Book;
+import cz.shmoula.textio.exception.BadRequestException;
+import cz.shmoula.textio.exception.BookNotFoundException;
 import cz.shmoula.textio.service.BookRepository;
 
 /**
  * Prace s knihami
- * Popis API je na https://app.apiary.io/textio/
+ * Popis API je na http://docs.textio.apiary.io/
  * @author vbalak
  *
  */
@@ -56,9 +58,9 @@ public class BookController {
 		Book book = bookRepository.findOne(id);
 		
 		if(book == null)
-			return new ResponseEntity<String>("", new HttpHeaders(), HttpStatus.NOT_FOUND);
-		else
-			return new ResponseEntity<String>(book.getContent(), new HttpHeaders(), HttpStatus.OK);
+			throw new BookNotFoundException("Kniha nenalezena: " + id.toString());
+			
+		return new ResponseEntity<String>(book.getContent(), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	/**
@@ -69,17 +71,20 @@ public class BookController {
 	 */
 	@RequestMapping(value = "/book", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public Book postBook(@RequestBody String content, HttpServletRequest request) {
+	public ResponseEntity<Book> postBook(@RequestBody String content, HttpServletRequest request) {
 		String author = request.getHeader(HEADER_AUTHOR);
 		String title = request.getHeader(HEADER_TITLE);
+		
+		if(author == null || author.isEmpty() || title == null || title.isEmpty())
+			throw new BadRequestException("Malo poskytnutych informaci. Je nutne vyplnit hlavicky 'author' a 'title'.");
 		
 		Book book = new Book();
 		book.setAuthor(author);
 		book.setTitle(title);
 		book.setContent(content);
-		
+			
 		book = bookRepository.save(book);
 		
-		return book;
+		return new ResponseEntity<Book>(book, new HttpHeaders(), HttpStatus.OK);
 	}
 }
