@@ -21,7 +21,7 @@ import cz.shmoula.textio.exception.BookNotFoundException;
 public class TextIoExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	/**
-	 * Nenalezeni knihy - vraci 404 a prazdne JSON telo
+	 * Nenalezeni knihy - vraci 404 a prazdne telo odpovedi (text)
 	 * @param e
 	 * @param request
 	 * @return
@@ -31,10 +31,10 @@ public class TextIoExceptionHandler extends ResponseEntityExceptionHandler {
 		BookNotFoundException exception = (BookNotFoundException) e;
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(MediaType.TEXT_PLAIN);
 		headers.add("error", exception.getMessage());
 
-		return handleExceptionInternal(e, "{}", headers, HttpStatus.NOT_FOUND, request);
+		return handleExceptionInternal(e, "", headers, HttpStatus.NOT_FOUND, request);
 	}
 	
 	/**

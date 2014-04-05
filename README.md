@@ -3,7 +3,8 @@ Jednoduchy backend pro ctecku knih na Google Glass - tato verze slouzi pouze pro
 
 ## Documentation
 
-* [Nastrel API na apiary.io](https://app.apiary.io/textio/)
+* [Nastrel API na apiary.io](http://docs.textio.apiary.io/)
+* [Endpoint bezi na OpenShiftu](http://textio-shmoula.rhcloud.com)
 
 ## License
 
